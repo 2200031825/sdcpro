@@ -1,11 +1,14 @@
-const mysql = require("mysql2");
 require("dotenv").config();
+const { Sequelize } = require("sequelize");
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-}).promise(); 
+const sequelize = new Sequelize(process.env.MYSQL_URL, {
+  dialect: "mysql",
+  logging: false, // Optional: Disable logging
+});
 
-module.exports = pool;
+sequelize
+  .authenticate()
+  .then(() => console.log("✅ Database connected to Railway"))
+  .catch((err) => console.error("❌ Database connection failed:", err));
+
+module.exports = sequelize;

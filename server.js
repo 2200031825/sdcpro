@@ -1,46 +1,47 @@
-    require('dotenv').config();
-    const express = require('express');
-    const cors = require('cors');
-    const bodyParser = require('body-parser');
-    const mysql = require('mysql2');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const db = require("./db"); // Import Sequelize database instance
 
-    const app = express();
-    const PORT = process.env.PORT || 5000;
+// Import Routes
+const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
-    app.use(cors());
-    app.use(bodyParser.json());
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-    // Database connection
-    const db = mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    });
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
-    db.connect(err => {
-        if (err) {
-            console.error('Database connection failed:', err);
-        } else {
-            console.log('Connected to database');
-        }
-    });
+// Routes
+app.use("/users", userRoutes);
+app.use("/projects", projectRoutes);
 
-    // Root route to check if server is running
-    app.get('/', (req, res) => {
-        res.send('Backend is running on Railway!');
-    });
+// Root route
+app.get("/", (req, res) => {
+  res.send("Backend is running on Railway!");
+});
 
-    // Example API route
-    app.get('/db-test', (req, res) => {
-        db.query('SELECT 1', (err, results) => {
-            if (err) {
-                return res.status(500).json({ status: 'error', message: 'Database connection failed' });
-            }
-            res.json({ status: 'success', message: 'Database connected successfully', results });
-        });
-    });
+// Database connection test route
+app.get("/db-test", async (req, res) => {
+  try {
+    await db.authenticate();
+    res.json({ status: "success", message: "Database connected successfully" });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: "Database connection failed", error: error.message });
+  }
+});
 
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
+// Server Listener
+app.listen(PORT, async () => {
+  try {
+    await db.sync(); // Sync models with database
+    console.log("Database synced successfully.");
+  } catch (error) {
+    console.error("Database sync error:", error);
+  }
+  console.log(`Server running on port ${PORT}`);
+});
