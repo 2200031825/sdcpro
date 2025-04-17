@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 // Get all users
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.findAll({ attributes: ["id", "name", "email", "age"] });
+    const users = await User.findAll({ attributes: ["id", "name", "email", "age", "payments"] });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -13,7 +13,7 @@ exports.getUsers = async (req, res) => {
 // Get user by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id, { attributes: ["id", "name", "email", "age"] });
+    const user = await User.findByPk(req.params.id, { attributes: ["id", "name", "email", "age", "payments"] });
     if (!user) return res.status(404).json({ error: "User not found" });
     
     res.status(200).json(user);
@@ -24,14 +24,14 @@ exports.getUserById = async (req, res) => {
 
 // Create user
 exports.createUser = async (req, res) => {
-  const { name, email, password, confirmPassword, age } = req.body;
+  const { name, email, password, confirmPassword, age, payments } = req.body;
 
   if (password !== confirmPassword) {
     return res.status(400).json({ error: "Passwords do not match" });
   }
 
   try {
-    const user = await User.create({ name, email, password, confirmPassword, age });
+    const user = await User.create({ name, email, password, confirmPassword, age, payments });
     res.status(201).json({ message: "User Created", user });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -40,7 +40,7 @@ exports.createUser = async (req, res) => {
 
 // Update user
 exports.updateUser = async (req, res) => {
-  const { name, email, password, confirmPassword, age } = req.body;
+  const { name, email, password, confirmPassword, age, payments } = req.body;
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -49,7 +49,7 @@ exports.updateUser = async (req, res) => {
       return res.status(400).json({ error: "Passwords do not match" });
     }
 
-    await user.update({ name, email, password, confirmPassword, age });
+    await user.update({ name, email, password, confirmPassword, age, payments });
     res.json({ message: "User updated successfully", user });
   } catch (error) {
     res.status(500).json({ error: error.message });

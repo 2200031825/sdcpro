@@ -1,12 +1,6 @@
-const express = require("express");
-const upload = require("../middlewares/upload");
-const {
-  getProjects,
-  getProjectById,
-  createProject,
-  updateProject,
-  deleteProject,
-} = require("../controllers/projectController");
+const express = require('express');
+const upload = require('../middlewares/upload');
+const { getProjects, getProjectById, createProject, updateProject, deleteProject } = require('../controllers/projectController');
 
 const router = express.Router();
 
@@ -46,7 +40,7 @@ router.get("/:id", getProjectById);
  * @swagger
  * /projects:
  *   post:
- *     summary: Create a new project with an image
+ *     summary: Create a new project with an image and amount
  *     tags: [Projects]
  *     consumes:
  *       - multipart/form-data
@@ -69,6 +63,10 @@ router.get("/:id", getProjectById);
  *               image:
  *                 type: string
  *                 format: binary
+ *               amount:
+ *                 type: number
+ *                 format: float
+ *                 description: The budget or amount for the project
  *     responses:
  *       201:
  *         description: Project created
@@ -79,7 +77,7 @@ router.post("/", upload.single("image"), createProject);
  * @swagger
  * /projects/{id}:
  *   put:
- *     summary: Update an existing project
+ *     summary: Update an existing project with an image and amount
  *     tags: [Projects]
  *     parameters:
  *       - in: path
@@ -106,6 +104,10 @@ router.post("/", upload.single("image"), createProject);
  *               image:
  *                 type: string
  *                 format: binary
+ *               amount:
+ *                 type: number
+ *                 format: float
+ *                 description: The budget or amount for the project
  *     responses:
  *       200:
  *         description: Project updated

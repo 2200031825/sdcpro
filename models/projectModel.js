@@ -23,6 +23,11 @@ const Project = sequelize.define("Project", {
     allowNull: false,
     defaultValue: "open",
   },
+  amount: {
+    type: DataTypes.FLOAT, // or DECIMAL(10, 2) for currency
+    allowNull: false,
+    defaultValue: 0.0, // Optional: sets default amount
+  },
 }, { timestamps: false });
 
 module.exports = Project;

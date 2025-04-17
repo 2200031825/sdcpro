@@ -23,6 +23,10 @@ const User = sequelize.define("User", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  payments: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.00, // Default value for payments
+  },
 }, { timestamps: false });
 
 module.exports = User;
